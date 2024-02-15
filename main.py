@@ -1,5 +1,6 @@
 import logging
 import datetime
+import math
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent
@@ -8,6 +9,7 @@ from ulauncher.api.shared.action.RenderResultListAction import RenderResultListA
 from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAction
 
 logger = logging.getLogger(__name__)
+DEFAULT_UNIT = 's'
 
 class TimestampExtension(Extension):
 
@@ -21,9 +23,12 @@ class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
         items = []
 
+        unit = extension.preferences.get('unit', DEFAULT_UNIT)
+        is_ms = unit == 'ms'
+
         if event.get_argument() is None:
             dt = datetime.datetime.now()
-            ts = str(int(dt.timestamp()))
+            ts = str(int(dt.timestamp()) * (1000 if is_ms else 1))
             items.append(ExtensionResultItem(
                 icon='images/icon.png',
                 name="Timestamp: " + ts,
@@ -33,8 +38,9 @@ class KeywordQueryEventListener(EventListener):
             ))
             return RenderResultListAction(items)
 
-        utcDt = datetime.datetime.utcfromtimestamp(int(event.get_argument()))
-        localDt = datetime.datetime.fromtimestamp(int(event.get_argument()))
+        ts = math.floor(int(event.get_argument()) / (1000 if is_ms else 1))
+        utcDt = datetime.datetime.utcfromtimestamp(ts)
+        localDt = datetime.datetime.fromtimestamp(ts)
 
         formattedLocalDt = localDt.strftime('%Y-%m-%d %H:%M:%S')
         formattedUtcDt = utcDt.strftime('%Y-%m-%d %H:%M:%S')

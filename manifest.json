@@ -1,7 +1,7 @@
 {
     "required_api_version": "^2.0.0",
     "name": "Timestamp",
-    "description": "Convert unix timestamp to readble date format",
+    "description": "Convert unix timestamp to readable date format",
     "developer_name": "Bruno Paz",
     "icon": "images/icon.png",
     "options": {
@@ -13,6 +13,22 @@
             "type": "keyword",
             "name": "Timestamp Keyword",
             "default_value": "ts"
+        },
+        {
+            "id": "unit",
+            "type": "select",
+            "name": "Unix Timestamp Unit",
+            "default_value": "s",
+            "options": [
+                {
+                    "text": "Seconds",
+                    "value": "s"
+                },
+                {
+                    "text": "Milliseconds",
+                    "value": "ms"
+                }
+            ]
         }
     ]
 }
